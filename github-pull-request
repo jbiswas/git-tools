@@ -1,0 +1,32 @@
+#!/bin/bash
+
+destination_repo=${GITHUBREPOSITORY}
+destination_branch=${GITHUBBRANCH}
+destination_org=${GITHUBORGANIZATION}
+
+usage() {
+cat << EOF
+usage $0 -u USERNAME -s SOURCE_BRANCH [-r REMOTE_REPOSITORY] [-b REMOTE_BRANCH] [-o ORGANIZATIONorUSER]
+example $0 -u GITHUBUSERNAME -s GITHUBBRANCH -r GITHUBREPO -b TARGETBRANCH -o ORGANIZATION
+EOF
+}
+
+while getopts "u:s:r:b:o:" OPTION
+do
+  case "$OPTION" in
+  u) user="$OPTARG";;
+  s) source_branch=$OPTARG;;
+  r) destination_repo=$OPTARG;;
+  b) destination_branch=$OPTARG;;
+  o) destination_org=$OPTARG;;
+  ?) usage;exit;;
+  esac
+done
+
+if [[ -z $user ]] || [[ -z $source_branch ]]
+then
+  usage
+  exit 1
+fi
+
+curl -i -u ${user} -X POST -d '{"title":"'"${source_branch}"'", "body":"Pull request created with CLI", "head":"'"${user}:${source_branch}"'", "base":"'"$destination_branch"'"}' https://api.github.com/repos/${destination_org}/${destination_repo}/pulls --header "Content-Type:application/json"
