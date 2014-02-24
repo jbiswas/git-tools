@@ -25,16 +25,16 @@ class Build
       system("git checkout -b #{@head_user}-#{@head_branch} #{@base_branch}")
       ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
       if ok
-        build_ok = system("make -s")
-        if build_ok
+        build_failed = system("make -s")
+        if build_failed
+          result = "Build failed after merge :-1:. Please make sure that make runs properly in the root folder"
+        else
           system("git checkout #{@base_branch}")
           system("git merge --no-edit #{@head_user}-#{@head_branch}")
-          result = "All good"
-        else
-          result = "Build failed after merge. Please make sure that make runs properly in the root folder"
+          result = "All good :+1:"
         end
       else
-        result = "Merge failed. Please rebase onto #{@repository}/#{@base_branch}"
+        result = "Merge failed :-1:. Please rebase onto #{@repository}/#{@base_branch}"
       end
       cleanup()
     end
