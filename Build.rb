@@ -33,7 +33,7 @@ class Build
         if build_ok
           system("git checkout #{@base_branch}")
           system("git merge --no-edit #{@head_user}-#{@head_branch}")
-          result = "All good :+1:"
+          result = ":ok: :cool: :cool: :+1:"
         else
           system("echo $PATH")
           result = "Build failed after merge :-1:. Please make sure that make runs properly in the root folder"
