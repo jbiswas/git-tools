@@ -23,15 +23,20 @@ class Build
       system("git checkout #{@base_branch}")
       system("git pull")
       system("git checkout -b #{@head_user}-#{@head_branch} #{@base_branch}")
-      ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
-      if ok
-        build_failed = system("make -s")
-        if build_failed
-          result = "Build failed after merge :-1:. Please make sure that make runs properly in the root folder"
-        else
+      system("git submodule init")
+      system("git submodule update")
+      pull_ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
+      if pull_ok
+        system("git submodule foreach 'git remote add #{@head_user} `git config --get remote.origin.url | sed 's/#{@base_user}/#{@head_user}/'`; git fetch --all -p'")
+        build_ok = system("make -s")
+        puts "Build ok flag = #{build_ok}"
+        if build_ok
           system("git checkout #{@base_branch}")
           system("git merge --no-edit #{@head_user}-#{@head_branch}")
           result = "All good :+1:"
+        else
+          system("echo $PATH")
+          result = "Build failed after merge :-1:. Please make sure that make runs properly in the root folder"
         end
       else
         result = "Merge failed :-1:. Please rebase onto #{@repository}/#{@base_branch}"

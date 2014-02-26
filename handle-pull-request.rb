@@ -39,10 +39,12 @@ if __FILE__ == $0
           lastPullSeen = doc["number"].to_i
         end
         if lastPull < doc["number"].to_i
+          puts "Building pull #{doc["number"]} for #{repository}:"
           b = Build.new(repository,
                       doc["base"]["repo"]["owner"]["login"], doc["base"]["ref"],
                       doc["head"]["repo"]["owner"]["login"], doc["head"]["ref"])
           comment = b.run_test_suite()
+          puts "Comment: #{comment}"
           g.post_comment(doc["_links"]["comments"]["href"], comment)
         else
         end

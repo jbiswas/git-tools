@@ -29,7 +29,7 @@ class GitHub
     req.basic_auth("token", @auth_token)
     req["content-type"] = "application/json"
   
-    req.body={:body => "Gictator says: #{comment}"}.to_json
+    req.body={:body => "Gictatr[under development] says: #{comment}"}.to_json
     res = Net::HTTP.start(url.host, url.port, :use_ssl => true) do |http|
       p response = http.request(req)
     end
