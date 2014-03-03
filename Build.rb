@@ -6,8 +6,8 @@ class Build
     @head_user = head_user
     @head_branch = head_branch
   end
- 
-  def cleanup() 
+
+  def cleanup()
     system("git reset --hard")
     system("git checkout #{@base_branch}")
     system("git reset --hard origin/#{@base_branch}")
@@ -28,6 +28,7 @@ class Build
       pull_ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
       if pull_ok
         system("git submodule foreach 'git remote add #{@head_user} `git config --get remote.origin.url | sed 's/#{@base_user}/#{@head_user}/'`; git fetch --all -p'")
+        system("git submodule update")
         build_ok = system("make -s")
         puts "Build ok flag = #{build_ok}"
         if build_ok
