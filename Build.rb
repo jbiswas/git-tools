@@ -20,9 +20,9 @@ class Build
     FileUtils.rm_rf(@repository)
     value = system("git clone git@github.com:#{@base_user}/#{@repository}.git")
     Dir.chdir(@repository) do
-      system("git checkout #{@base_branch}")
+      system("git checkout origin/#{@base_branch}")
       system("git pull")
-      system("git checkout -b #{@head_user}-#{@head_branch} #{@base_branch}")
+      system("git checkout -b #{@head_user}-#{@head_branch} origin/#{@base_branch}")
       system("git submodule init")
       system("git submodule update")
       pull_ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
