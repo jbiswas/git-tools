@@ -17,9 +17,13 @@ class Build
   def run_test_suite()
     result = "Not sure"
     puts "Checking #{@head_user}/#{@head_branch} on #{@repository}/#{@base_branch}"
-    FileUtils.rm_rf(@repository)
-    value = system("git clone git@github.com:#{@base_user}/#{@repository}.git")
-    Dir.chdir(@repository) do
+    FileUtils::mkdir_p 'build'
+    Dir.chdir("build") do
+      FileUtils.rm_rf(@repository)
+      value = system("git clone git@github.com:#{@base_user}/#{@repository}.git")
+    end
+    build_dir = "build/#{@repository}"
+    Dir.chdir(build_dir) do
       system("git checkout origin/#{@base_branch}")
       system("git pull")
       system("git checkout -b #{@head_user}-#{@head_branch} origin/#{@base_branch}")

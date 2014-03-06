@@ -1,2 +1,4 @@
 *.last
+*.pid
 config.rb
+build
