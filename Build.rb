@@ -31,6 +31,7 @@ class Build
       system("git submodule update")
       pull_ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
       if pull_ok
+        system("git submodule init")
         system("git submodule foreach 'git remote add #{@head_user} `git config --get remote.origin.url | sed 's/#{@base_user}/#{@head_user}/'`; git fetch --all -p'")
         system("git submodule update")
         build_ok = system("make -s")
