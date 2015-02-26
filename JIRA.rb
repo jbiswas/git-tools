@@ -20,9 +20,9 @@ class JIRA
 
     if res.code == "200"
       result = JSON.parse(res.body)
-      summary = result["issues"][0]["fields"]["summary"]
+      summary = [result["issues"][0]["fields"]["issuetype"]["name"], result["issues"][0]["fields"]["summary"]]
     else
-      summary = ""
+      summary = []
     end
     return summary
   end
