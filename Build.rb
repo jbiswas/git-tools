@@ -27,13 +27,12 @@ class Build
       system("git checkout origin/#{@base_branch}")
       system("git pull")
       system("git checkout -b #{@head_user}-#{@head_branch} origin/#{@base_branch}")
-      system("git submodule init")
-      system("git submodule update")
+      system("git submodule update --init --recursive")
       pull_ok = system("git pull -q --no-edit git@github.com:#{@head_user}/#{@repository}.git #{@head_branch}")
       if pull_ok
-        system("git submodule init")
+        system("git submodule update --init --recursive")
         system("git submodule foreach 'git remote add #{@head_user} `git config --get remote.origin.url | sed 's/#{@base_user}/#{@head_user}/'`; git fetch --all -p'")
-        system("git submodule update")
+        system("git submodule update --init --recursive")
         build_ok = system("make -s")
         puts "Build ok flag = #{build_ok}"
         if build_ok
