@@ -39,6 +39,16 @@ if __FILE__ == $0
           lastPullSeen = doc["number"].to_i
         end
         if lastPull < doc["number"].to_i
+          commit_history = g.get_commit_history(repository, doc["number"])
+          commit_history.each do | commit |
+            if commit["commit"]["message"].match(/\bwip\b/i)
+              comment = "Please change the message for commit #{commit["sha"][0..6]}\n"
+              comment = comment + commit["commit"]["message"]
+              puts "Commit message: #{comment}"
+              g.post_comment(doc["_links"]["comments"]["href"], comment)
+            end
+          end
+          puts "Reading commit history from #{doc["commits_url"]}"
           puts "Building pull #{doc["number"]} for #{repository}:"
           b = Build.new(repository,
                       doc["base"]["repo"]["owner"]["login"], doc["base"]["ref"],

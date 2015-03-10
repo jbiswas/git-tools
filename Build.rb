@@ -42,7 +42,7 @@ class Build
         else
           system("echo $PATH")
           result = "Build failed after merge :-1:. Please make sure that make runs properly in the root folder\n"
-          result = result + %x(make 2>&1)
+          result = result + "```\n" + %x(make 2>&1) + "\n```\n"
         end
       else
         result = "Merge failed :-1:. Please rebase onto #{@repository}/#{@base_branch}"
