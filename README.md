@@ -3,12 +3,18 @@ git-tools
 
 Command line tools for git
 
-Environment variables
-=====================
-Set the following environment variables to avoid repetitive typing
-* GITHUBREPOSITORY
-* GITHUBBRANCH
-* GITHUBORGANIZATION
+Running Gictator
+================
+To run Gictator from crontab use a script like the one shown below
+```
+#!/bin/bash
+. ${HOME}/.bashrc
+cd ${HOME}/Private
+if [ -d "git-tools" ]; then
+  cd git-tools
+  flock -n handle_pull_request.pid -c ./handle-pull-request.rb
+fi
+```
 
 Requirements
 ============
