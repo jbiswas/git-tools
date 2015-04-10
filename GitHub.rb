@@ -47,7 +47,7 @@ class GitHub
     req = Net::HTTP::Post.new(url.to_s)
     req.basic_auth("token", @auth_token)
     req["content-type"] = "application/json"
-    finalComment = ":moyai: Gictator[almost reliable] says: #{comment}\n\n"
+    finalComment = ":moyai: Gictator says: #{comment}\n\n"
     finalComment += "If you think there is a bug in Gictator's judgement please "
     finalComment += "create an issue here "
     finalComment += "https://github.com/jbiswas/git-tools/issues/new"
