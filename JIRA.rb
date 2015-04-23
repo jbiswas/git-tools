@@ -7,22 +7,23 @@ class JIRA
     @pass = password
   end
 
-  def get_issue_summary(issue_key)
-    url = URI("https://bugs.neurobat.net/rest/api/2/search?jql=key=#{issue_key}")
-
+  def get_issue_details(jql)
+    summary = []
+    url = URI("https://bugs.neurobat.net/rest/api/2/search?jql=#{jql}")
     req = Net::HTTP::Get.new(url.to_s)
     req.basic_auth(@user, @pass)
     req["content-type"] = "application/json"
-
     res = Net::HTTP.start(url.host, url.port, :use_ssl => true) do |http|
       response = http.request(req)
     end
-
     if res.code == "200"
       result = JSON.parse(res.body)
-      summary = [result["issues"][0]["fields"]["issuetype"]["name"], result["issues"][0]["fields"]["summary"]]
-    else
-      summary = []
+      if result["total"] > 0
+        summary = [result["issues"][0]["fields"]["issuetype"]["name"], result["issues"][0]["fields"]["status"]["name"], result["issues"][0]["fields"]["resolutiondate"], result["issues"][0]["fields"]["updated"], result["issues"][0]["fields"]["summary"]]
+        if summary[2].nil?
+          summary[2] = "unknown"
+        end
+      end
     end
     return summary
   end
