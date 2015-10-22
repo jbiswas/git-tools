@@ -41,7 +41,7 @@ if __FILE__ == $0
         if lastPull < doc["number"].to_i
           commit_history = g.get_commit_history(repository, doc["number"])
           commit_history.each do | commit |
-            if commit["commit"]["message"].match(/\bwip\b/i)
+            if commit["commit"]["message"].split("\n")[0].match(/\bwip\b/i)
               comment = "Please change the message for commit #{commit["sha"][0..6]}\n"
               comment = comment + commit["commit"]["message"]
               puts "Commit message: #{comment}"
