@@ -1,2 +1,2 @@
 #!/bin/bash
-git lol $1 | sed 's/[|*()\/]//g' | grep "\[" | awk 'FS="]" {print $1}' | awk 'FS="[" {print "key="$2}' | sort -uV | xargs -l ~/neurobat/git-tools/get_issue.rb | sort -k3
+git lol $1 | grep "\[" | sed 's/.*\[//' | awk 'FS="]" {print $1}' | sed 's/.$//' | sort -uV | xargs -l ~/neurobat/git-tools/get_issue.rb | sort -k5
