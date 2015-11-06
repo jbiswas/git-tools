@@ -1,14 +1,20 @@
 require 'net/http'
 require 'json'
+require 'yaml'
+
+CURRENT_PATH = File.expand_path(File.dirname(__FILE__))
+CONFIG_FILE = File.join(CURRENT_PATH, 'etc/jira_auth.yaml')
 
 class JIRA
-  def initialize(username, password)
-    @user = username
-    @pass = password
+  def initialize()
+     jira_auth = YAML::load(File.open(CONFIG_FILE))
+     @user = jira_auth['username']
+     @pass = jira_auth['password']
   end
 
   def get_issue_details(jql)
     summary = []
+    linkedissues = ""
     url = URI("https://bugs.neurobat.net/rest/api/2/search?jql=#{jql}")
     req = Net::HTTP::Get.new(url.to_s)
     req.basic_auth(@user, @pass)
@@ -19,13 +25,36 @@ class JIRA
     if res.code == "200"
       result = JSON.parse(res.body)
       if result["total"] > 0
-        summary = [result["issues"][0]["fields"]["issuetype"]["name"], result["issues"][0]["fields"]["status"]["name"], result["issues"][0]["fields"]["resolutiondate"], result["issues"][0]["fields"]["updated"], result["issues"][0]["fields"]["summary"]]
-        if summary[2].nil?
-          summary[2] = "unknown"
+        linkedissues = get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
+        summary = [result["issues"][0]["fields"]["issuetype"]["name"], 
+                   get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
+                   result["issues"][0]["fields"]["status"]["name"], 
+                   result["issues"][0]["fields"]["resolutiondate"], 
+                   result["issues"][0]["fields"]["updated"], 
+                   result["issues"][0]["fields"]["summary"]]
+        if summary[3].nil?
+          summary[3] = "unknown"
         end
       end
     end
     return summary
+  end
+
+  def get_linked_issues(issuelinks)
+    if issuelinks.empty?
+    else
+      linklist = ""
+      issuelinks.each { |id|
+        unless id["outwardIssue"].nil?
+          linklist = id["outwardIssue"]["key"] + ", " + linklist.to_s
+        end
+        unless id["inwardIssue"].nil?
+          linklist = id["inwardIssue"]["key"] + ", " + linklist.to_s
+        end
+      }
+      2.times do linklist.chop! end
+      return linklist.to_s
+    end
   end
 
   def get_issues_in_sprint()
