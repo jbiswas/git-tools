@@ -30,7 +30,6 @@ class JIRA
                    get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
                    result["issues"][0]["fields"]["status"]["name"], 
                    result["issues"][0]["fields"]["resolutiondate"], 
-                   result["issues"][0]["fields"]["updated"], 
                    result["issues"][0]["fields"]["summary"]]
         if summary[3].nil?
           summary[3] = "unknown"
