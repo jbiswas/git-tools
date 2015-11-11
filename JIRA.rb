@@ -26,8 +26,8 @@ class JIRA
       result = JSON.parse(res.body)
       if result["total"] > 0
         linkedissues = get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
-        summary = [result["issues"][0]["fields"]["issuetype"]["name"], 
-                   get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
+        summary = [get_linked_issues(result["issues"][0]["fields"]["issuelinks"]),
+                   result["issues"][0]["fields"]["issuetype"]["name"], 
                    result["issues"][0]["fields"]["status"]["name"], 
                    result["issues"][0]["fields"]["resolutiondate"], 
                    result["issues"][0]["fields"]["summary"]]
